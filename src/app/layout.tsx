@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: "PT Sigma Core Solusindo | End-to-End IT Solutions",
   description:
     "Technology infrastructure and system integrator for secure, scalable, and reliable business operations.",
+  icons: {
+    icon: [{ url: "/assets/scs-icon.png", type: "image/png" }],
+    shortcut: ["/assets/scs-icon.png"],
+    apple: [{ url: "/assets/scs-icon.png", type: "image/png" }],
+  },
   openGraph: {
     title: "PT Sigma Core Solusindo | End-to-End IT Solutions",
     description:
