@@ -23,28 +23,6 @@ Payload CMS ──────────────────── Postgre
 
 The landing page reads published solutions, partners, projects, insights, hero copy, contact details, and SEO metadata from Payload every five minutes. Bundled company-profile data remains as a safe fallback while the CMS is empty or unavailable.
 
-## Project structure
-
-```text
-src/
-  app/
-    (frontend)/       Public App Router routes and API boundary
-    (payload)/        Payload admin and API routes
-  cms/                Payload collections, globals, UI, and migrations
-  components/         Shared React components
-  content/            Static fallback content and navigation data
-  lib/                Server-side data access and view-model mapping
-  payload-types.ts    Generated Payload types
-public/               Static images and local CMS media
-services/core-api/    Spring Boot business API
-infra/                Deployment infrastructure
-docs/                 Operations and deployment documentation
-```
-
-Application source lives under `src/`, while framework configuration, environment templates, package metadata, and static files remain at the repository root. The `@/` alias resolves to `src/`.
-
-See [Project Structure](docs/PROJECT-STRUCTURE.md) for the complete directory map, application boundaries, data flow, and code-placement rules.
-
 ## Run the website and CMS
 
 Requirements: Node.js 20+ and pnpm.
