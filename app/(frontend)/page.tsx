@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   ArrowDown,
   ArrowRight,
@@ -7,56 +8,46 @@ import {
   Check,
   Mail,
   MapPin,
-  Menu,
   Phone,
   Sparkles,
 } from "lucide-react";
-import { navigation, partners, process, solutions, values } from "@/content/site";
+import { ContactForm } from "@/components/contact-form";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { WhatsAppButton } from "@/components/whatsapp-button";
+import { process, values } from "@/content/site";
+import { getLandingContent } from "@/lib/landing-content";
 
-export default function Home() {
+export const revalidate = 300;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await getLandingContent();
+  return {
+    title: settings.seo.title,
+    description: settings.seo.description,
+    openGraph: {
+      title: settings.seo.title,
+      description: settings.seo.description,
+      type: "website",
+      images: [{ url: "/og.png", width: 1731, height: 909, alt: "PT Sigma Core Solusindo" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: settings.seo.title,
+      description: settings.seo.description,
+      images: ["/og.png"],
+    },
+  };
+}
+
+export default async function Home() {
+  const { insights, partners, projects, settings, solutions } = await getLandingContent();
   const partnerRows = [partners.slice(0, 10), partners.slice(10)];
+  const phoneHref = `tel:${settings.contact.phone.replace(/[^+\d]/g, "")}`;
 
   return (
     <main>
-      <header className="site-header">
-        <div className="header-inner shell">
-          <Link className="brand" href="#top" aria-label="Sigma Core Solusindo - kembali ke atas">
-            <Image
-              src="/assets/scs-logo.png"
-              width={533}
-              height={267}
-              alt="PT Sigma Core Solusindo"
-              priority
-            />
-          </Link>
-
-          <nav className="desktop-nav" aria-label="Navigasi utama">
-            {navigation.map((item) => (
-              <Link href={item.href} key={item.href}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          <Link className="header-cta" href="#kontak">
-            Konsultasi <ArrowUpRight size={16} />
-          </Link>
-
-          <details className="mobile-menu">
-            <summary aria-label="Buka menu">
-              <Menu size={22} />
-            </summary>
-            <nav aria-label="Navigasi seluler">
-              {navigation.map((item) => (
-                <Link href={item.href} key={item.href}>
-                  {item.label}
-                </Link>
-              ))}
-              <Link href="#kontak">Konsultasi</Link>
-            </nav>
-          </details>
-        </div>
-      </header>
+      <SiteHeader />
 
       <section className="hero" id="top">
         <Image
@@ -73,17 +64,14 @@ export default function Home() {
         <div className="hero-content shell">
           <div className="hero-copy reveal">
             <p className="eyebrow light">
-              <span /> Technology Infrastructure &amp; System Integrator
+              <span /> {settings.hero.eyebrow}
             </p>
             <h1>
-              Teknologi terintegrasi.
+              {settings.hero.headline}
               <br />
-              <em>Bisnis terus melaju.</em>
+              <em>{settings.hero.highlight}</em>
             </h1>
-            <p className="hero-lead">
-              Kami merancang, mengintegrasikan, dan mengoptimalkan solusi IT end-to-end untuk
-              operasional bisnis yang lebih andal, aman, dan scalable.
-            </p>
+            <p className="hero-lead">{settings.hero.description}</p>
             <div className="hero-actions">
               <Link className="button button-primary" href="#kontak">
                 Diskusikan kebutuhan <ArrowUpRight size={18} />
@@ -120,9 +108,9 @@ export default function Home() {
               bekerja sebagai satu ekosistem yang utuh.
             </p>
             <div className="about-metrics">
-              <div><strong>06</strong><span>Portofolio solusi inti</span></div>
-              <div><strong>06</strong><span>Tahap integrasi end-to-end</span></div>
-              <div><strong>01</strong><span>Partner untuk seluruh kebutuhan IT</span></div>
+              {settings.companyFacts.map((fact) => (
+                <div key={`${fact.value}-${fact.label}`}><strong>{fact.value}</strong><span>{fact.label}</span></div>
+              ))}
             </div>
           </div>
         </div>
@@ -145,7 +133,7 @@ export default function Home() {
             {solutions.map((solution) => {
               const Icon = solution.icon;
               return (
-                <article className="solution-card" key={solution.title}>
+                <Link className="solution-card" href={`/solusi/${solution.slug}`} key={solution.title}>
                   <div className="solution-topline">
                     <span>{solution.number}</span>
                     <Icon size={26} strokeWidth={1.6} />
@@ -160,7 +148,7 @@ export default function Home() {
                     </ul>
                   </div>
                   <ArrowUpRight className="card-arrow" size={20} />
-                </article>
+                </Link>
               );
             })}
           </div>
@@ -225,6 +213,38 @@ export default function Home() {
         </div>
       </section>
 
+      {projects.length > 0 && (
+        <section className="projects section" id="proyek">
+          <div className="shell">
+            <div className="section-heading-row projects-heading">
+              <div>
+                <p className="eyebrow"><span /> Selected projects</p>
+                <h2 className="section-title">Implementasi yang memberi dampak nyata.</h2>
+              </div>
+              <p>Beberapa solusi yang kami rancang untuk menjawab kebutuhan operasional dan pertumbuhan bisnis.</p>
+            </div>
+            <div className="project-grid">
+              {projects.map((project, index) => (
+                <Link className={`project-card${index === 0 ? " featured" : ""}`} href={`/proyek/${project.slug}`} key={project.title}>
+                  <div className="project-card__visual">
+                    {project.image ? <Image src={project.image} alt={project.title} fill sizes="(max-width: 820px) 100vw, 50vw" /> : <span>0{index + 1}</span>}
+                    <div className="project-card__shade" />
+                    <p>{project.industry}</p>
+                  </div>
+                  <div className="project-card__content">
+                    <span>{project.client || "Confidential client"}</span>
+                    <h3>{project.title}</h3>
+                    <p>{project.summary}</p>
+                    {project.highlights.length > 0 && <ul>{project.highlights.map((highlight) => <li key={highlight}><Check size={13} /> {highlight}</li>)}</ul>}
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <Link className="section-link" href="/proyek">Lihat seluruh proyek <ArrowUpRight size={17} /></Link>
+          </div>
+        </section>
+      )}
+
       <section className="ecosystem section" id="ekosistem">
         <div className="shell ecosystem-heading">
           <p className="eyebrow light"><span /> Technology ecosystem</p>
@@ -250,6 +270,35 @@ export default function Home() {
         </div>
       </section>
 
+      {insights.length > 0 && (
+        <section className="insights section" id="insight">
+          <div className="shell">
+            <div className="section-heading-row insights-heading">
+              <div>
+                <p className="eyebrow"><span /> Latest insight</p>
+                <h2 className="section-title">Perspektif untuk keputusan teknologi yang lebih baik.</h2>
+              </div>
+              <p>Insight terbaru dari tim SCS seputar infrastruktur, keamanan, cloud, dan transformasi digital.</p>
+            </div>
+            <div className="insight-grid">
+              {insights.map((insight, index) => (
+                <Link className="insight-card" href={`/insight/${insight.slug}`} key={insight.title}>
+                  <div className="insight-card__visual">
+                    {insight.image ? <Image src={insight.image} alt={insight.title} fill sizes="(max-width: 580px) 100vw, 33vw" /> : <span>INSIGHT / 0{index + 1}</span>}
+                  </div>
+                  <div className="insight-card__content">
+                    <div><span>{insight.category}</span><time dateTime={insight.publishedAt}>{new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(new Date(insight.publishedAt))}</time></div>
+                    <h3>{insight.title}</h3>
+                    <p>{insight.excerpt}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <Link className="section-link" href="/insight">Baca seluruh insight <ArrowUpRight size={17} /></Link>
+          </div>
+        </section>
+      )}
+
       <section className="contact section" id="kontak">
         <div className="shell contact-card">
           <div className="contact-copy">
@@ -259,36 +308,19 @@ export default function Home() {
               Ceritakan kebutuhan infrastruktur dan sistem Anda. Tim kami siap membantu menyusun
               solusi yang tepat.
             </p>
-            <Link className="button button-primary" href="mailto:admin@sigmacore.id">
-              Mulai konsultasi <ArrowUpRight size={18} />
-            </Link>
+            <div className="contact-details">
+              <a href={`mailto:${settings.contact.email}`}><Mail size={20} /> {settings.contact.email}</a>
+              <a href={phoneHref}><Phone size={20} /> {settings.contact.phone}</a>
+              <p><MapPin size={20} /> {settings.contact.address}</p>
+            </div>
           </div>
-          <div className="contact-details">
-            <a href="mailto:admin@sigmacore.id"><Mail size={20} /> admin@sigmacore.id</a>
-            <a href="tel:+6285158558791"><Phone size={20} /> 0851 5855 8791</a>
-            <p><MapPin size={20} /> Plaza Aminta Lt. 5/504, Jl. TB. Simatupang Kav. 10, Jakarta Selatan</p>
-          </div>
+          <ContactForm solutions={solutions.map((solution) => ({ slug: solution.slug, title: solution.title }))} sourcePage="homepage" />
         </div>
       </section>
 
-      <footer>
-        <div className="shell footer-main">
-          <div className="footer-brand">
-            <Image src="/assets/scs-logo.png" width={533} height={267} alt="PT Sigma Core Solusindo" />
-            <p>Your end-to-end IT solution.</p>
-          </div>
-          <div className="footer-links">
-            {navigation.map((item) => <Link href={item.href} key={item.href}>{item.label}</Link>)}
-          </div>
-          <Link className="footer-site" href="https://sigmacore.id" target="_blank">
-            sigmacore.id <ArrowUpRight size={16} />
-          </Link>
-        </div>
-        <div className="shell footer-bottom">
-          <span>© 2026 PT Sigma Core Solusindo</span>
-          <span>Integrate · Secure · Optimize · Empower</span>
-        </div>
-      </footer>
+      <WhatsAppButton phone={settings.contact.phone} />
+
+      <SiteFooter />
     </main>
   );
 }

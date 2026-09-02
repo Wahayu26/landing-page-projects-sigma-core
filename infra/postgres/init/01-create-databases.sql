@@ -1,0 +1,3 @@
+CREATE DATABASE scs_cms;
+CREATE DATABASE scs_core;
+
