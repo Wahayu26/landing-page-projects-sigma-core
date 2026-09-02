@@ -4,7 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 
 import { navigation } from "@/content/site";
 
-export const SiteFooter = () => {
+export const SiteFooter: React.FC = () => {
   return (
     <footer>
       <div className="shell footer-main">

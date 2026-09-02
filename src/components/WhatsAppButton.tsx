@@ -11,7 +11,7 @@ const normalizeWhatsAppNumber = (phone: string) => {
   return digits;
 };
 
-export const WhatsAppButton = ({ phone }: WhatsAppButtonProps) => {
+export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ phone }) => {
   const number = normalizeWhatsAppNumber(phone);
   const message = encodeURIComponent(
     "Halo PT Sigma Core Solusindo, saya ingin berkonsultasi mengenai solusi IT untuk perusahaan kami.",

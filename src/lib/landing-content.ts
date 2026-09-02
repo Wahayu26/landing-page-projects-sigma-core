@@ -85,7 +85,7 @@ export type InsightView = {
   relatedSolutions: { slug: string; title: string }[];
 };
 
-function fallbackSolutionView(index: number): SolutionView {
+const fallbackSolutionView = (index: number): SolutionView => {
   const solution = fallbackSolutions[index];
   return {
     ...solution,
@@ -94,42 +94,42 @@ function fallbackSolutionView(index: number): SolutionView {
     content: null,
     partners: [],
   };
-}
+};
 
-export async function getPublishedSolutions(): Promise<SolutionView[]> {
+export const getPublishedSolutions = async (): Promise<SolutionView[]> => {
   return fallbackSolutions.map((_, index) => fallbackSolutionView(index));
-}
+};
 
-export async function getSolutionBySlug(slug: string): Promise<SolutionView | null> {
+export const getSolutionBySlug = async (slug: string): Promise<SolutionView | null> => {
   const index = fallbackSolutions.findIndex((solution) => solution.slug === slug);
   return index >= 0 ? fallbackSolutionView(index) : null;
-}
+};
 
-export async function getPublishedPartners() {
+export const getPublishedPartners = async () => {
   return fallbackPartners.map((partner) => ({ ...partner, website: null }));
-}
+};
 
-export async function getPublishedProjects(): Promise<ProjectView[]> {
+export const getPublishedProjects = async (): Promise<ProjectView[]> => {
   return [];
-}
+};
 
-export async function getProjectBySlug(_slug: string): Promise<ProjectView | null> {
+export const getProjectBySlug = async (_slug: string): Promise<ProjectView | null> => {
   return null;
-}
+};
 
-export async function getPublishedInsights(): Promise<InsightView[]> {
+export const getPublishedInsights = async (): Promise<InsightView[]> => {
   return [];
-}
+};
 
-export async function getInsightBySlug(_slug: string): Promise<InsightView | null> {
+export const getInsightBySlug = async (_slug: string): Promise<InsightView | null> => {
   return null;
-}
+};
 
-export async function getSiteSettings() {
+export const getSiteSettings = async () => {
   return fallbackSettings;
-}
+};
 
-export async function getLandingContent() {
+export const getLandingContent = async () => {
   const [solutions, partners, projects, insights, settings] = await Promise.all([
     getPublishedSolutions(),
     getPublishedPartners(),
@@ -145,4 +145,4 @@ export async function getLandingContent() {
     insights: insights.slice(0, 3),
     settings,
   };
-}
+};

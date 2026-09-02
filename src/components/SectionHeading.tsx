@@ -8,13 +8,13 @@ type SectionHeadingProps = {
   rowClassName?: string;
 };
 
-export const SectionHeading = ({
+export const SectionHeading: React.FC<SectionHeadingProps> = ({
   eyebrow,
   title,
   description,
   light = false,
   rowClassName = 'mb-16',
-}: SectionHeadingProps) => {
+}) => {
   const headingBlock = (
     <div>
       <p

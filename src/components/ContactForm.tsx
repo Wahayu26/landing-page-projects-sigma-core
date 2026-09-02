@@ -18,7 +18,7 @@ const readInterestFromQuery = (solutions: { slug: string; title: string }[], fal
   return isKnownSolution && queryInterest ? queryInterest : fallback;
 };
 
-export const ContactForm = ({ solutions = [], defaultInterest = "" }: ContactFormProps) => {
+export const ContactForm: React.FC<ContactFormProps> = ({ solutions = [], defaultInterest = "" }) => {
   const [interest, setInterest] = useState(() => readInterestFromQuery(solutions, defaultInterest));
   const helperTextId = useId();
 

@@ -5,7 +5,7 @@ import { ArrowUpRight, ChevronDown, Menu } from "lucide-react";
 import { navigation, solutionCategoryLabels } from "@/content/site";
 import { getPublishedSolutions } from "@/lib/landing-content";
 
-export const SiteHeader = async () => {
+export const SiteHeader: React.FC = async () => {
   const solutions = await getPublishedSolutions();
   const groupedSolutions = Object.entries(solutionCategoryLabels).map(([key, label]) => ({
     key,
