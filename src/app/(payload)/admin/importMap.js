@@ -21,10 +21,10 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { default as default_c7fdbd615166afffd15ee81a874b56b9 } from '../../../cms/components/AdminIcon'
-import { default as default_97f5c82efe5ea508e03c7ffe61b5f830 } from '../../../cms/components/AdminLogo'
-import { default as default_999c2f1fc3fcacb42bedda402eacada4 } from '../../../cms/components/AdminDashboard'
-import { default as default_d752a6397c2c8e165f5f939c870e3feb } from '../../../cms/components/BrandedCreateFirstUser'
+import { default as default_2e1c3bcd4b5b71c537fd3317ba3483f7 } from '../../../../src/cms/components/AdminIcon'
+import { default as default_e472021ae67f0ad867c69237c7f8fd20 } from '../../../../src/cms/components/AdminLogo'
+import { default as default_6d49d8f13d899375f156953f58ae566e } from '../../../../src/cms/components/AdminDashboard'
+import { default as default_5de76844de59c8b7fccbbc498da40ff3 } from '../../../../src/cms/components/BrandedCreateFirstUser'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -52,9 +52,9 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "/cms/components/AdminIcon#default": default_c7fdbd615166afffd15ee81a874b56b9,
-  "/cms/components/AdminLogo#default": default_97f5c82efe5ea508e03c7ffe61b5f830,
-  "/cms/components/AdminDashboard#default": default_999c2f1fc3fcacb42bedda402eacada4,
-  "/cms/components/BrandedCreateFirstUser#default": default_d752a6397c2c8e165f5f939c870e3feb,
+  "/src/cms/components/AdminIcon#default": default_2e1c3bcd4b5b71c537fd3317ba3483f7,
+  "/src/cms/components/AdminLogo#default": default_e472021ae67f0ad867c69237c7f8fd20,
+  "/src/cms/components/AdminDashboard#default": default_6d49d8f13d899375f156953f58ae566e,
+  "/src/cms/components/BrandedCreateFirstUser#default": default_5de76844de59c8b7fccbbc498da40ff3,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

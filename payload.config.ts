@@ -9,13 +9,13 @@ import { id } from "@payloadcms/translations/languages/id";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
-import { Media } from "./cms/collections/Media";
-import { Insights } from "./cms/collections/Insights";
-import { Partners } from "./cms/collections/Partners";
-import { Projects } from "./cms/collections/Projects";
-import { Solutions } from "./cms/collections/Solutions";
-import { Users } from "./cms/collections/Users";
-import { SiteSettings } from "./cms/globals/SiteSettings";
+import { Media } from "./src/cms/collections/Media";
+import { Insights } from "./src/cms/collections/Insights";
+import { Partners } from "./src/cms/collections/Partners";
+import { Projects } from "./src/cms/collections/Projects";
+import { Solutions } from "./src/cms/collections/Solutions";
+import { Users } from "./src/cms/collections/Users";
+import { SiteSettings } from "./src/cms/globals/SiteSettings";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -26,13 +26,15 @@ const db = usePostgres
   ? postgresAdapter({
       migrationDir: path.resolve(
         dirname,
-        "cms/migrations/postgres",
+        "src/cms/migrations/postgres",
       ),
+
       pool: {
         connectionString:
           process.env.DATABASE_URL ??
           "postgresql://scs:scs@localhost:5432/scs_cms",
       },
+
       push:
         process.env.PAYLOAD_DB_PUSH === "true",
     })
@@ -42,59 +44,71 @@ const db = usePostgres
           process.env.PAYLOAD_SQLITE_URL ??
           "file:./.data/payload.db",
       },
+
       migrationDir: path.resolve(
         dirname,
-        "cms/migrations/sqlite",
+        "src/cms/migrations/sqlite",
       ),
+
       push:
         process.env.PAYLOAD_DB_PUSH === "true",
     });
 
-export default buildConfig({
-  email: nodemailerAdapter({
-    defaultFromAddress:
-      process.env.SMTP_FROM ??
-      "noreply@sigmacore.id",
 
-    defaultFromName:
-      process.env.SMTP_FROM_NAME ??
-      "Sigma Core",
+const emailAdapter = process.env.SMTP_HOST
+  ? nodemailerAdapter({
+      defaultFromAddress:
+        process.env.SMTP_FROM ??
+        "admin@sigmacore.id",
 
-    transportOptions: {
-      host: process.env.SMTP_HOST,
+      defaultFromName:
+        process.env.SMTP_FROM_NAME ??
+        "Sigma Core",
 
-      port: Number(
-        process.env.SMTP_PORT ?? 587,
-      ),
+      transportOptions: {
+        host: process.env.SMTP_HOST,
 
-      secure:
-        process.env.SMTP_SECURE === "true",
+        port: Number(
+          process.env.SMTP_PORT ?? 587,
+        ),
 
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
+        secure:
+          process.env.SMTP_SECURE === "true",
+
+        auth:
+          process.env.SMTP_USER &&
+          process.env.SMTP_PASSWORD
+            ? {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASSWORD,
+              }
+            : undefined,
       },
-    },
-  }),
+    })
+  : undefined;
+
+
+export default buildConfig({
+  email: emailAdapter,
 
   admin: {
     user: Users.slug,
 
     components: {
       graphics: {
-        Icon: "/cms/components/AdminIcon",
-        Logo: "/cms/components/AdminLogo",
+        Icon: "/src/cms/components/AdminIcon",
+        Logo: "/src/cms/components/AdminLogo",
       },
 
       views: {
         dashboard: {
           Component:
-            "/cms/components/AdminDashboard",
+            "/src/cms/components/AdminDashboard",
         },
 
         createFirstUser: {
           Component:
-            "/cms/components/BrandedCreateFirstUser",
+            "/src/cms/components/BrandedCreateFirstUser",
         },
       },
     },
@@ -135,6 +149,7 @@ export default buildConfig({
 
   serverURL:
     process.env.PAYLOAD_SERVER_URL ??
+    process.env.NEXT_PUBLIC_SERVER_URL ??
     "http://localhost:3000",
 
   sharp,
@@ -143,7 +158,7 @@ export default buildConfig({
     outputFile:
       path.resolve(
         dirname,
-        "payload-types.ts",
+        "src/payload-types.ts",
       ),
   },
 });
