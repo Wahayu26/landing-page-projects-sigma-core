@@ -1,43 +1,6 @@
-name: scs-company-profile
+name: scs-web
 
 services:
-  postgres:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB:-postgres}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-postgres}"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    networks:
-      - backend
-
-  core-api:
-    image: scs/core-api:${APP_VERSION:-local}
-    build:
-      context: ./services/core-api
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    environment:
-      CORE_DATABASE_URL: jdbc:postgresql://postgres:5432/scs_core
-      CORE_DATABASE_USERNAME: ${POSTGRES_USER}
-      CORE_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
-      PORT: 8080
-    depends_on:
-      postgres:
-        condition: service_healthy
-    expose:
-      - "8080"
-    networks:
-      - backend
-
   web:
     image: scs/web:${APP_VERSION:-local}
     build:
@@ -51,47 +14,11 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
       NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
-      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
-      PAYLOAD_DB_PROVIDER: ${PAYLOAD_DB_PROVIDER:-postgres}
-      PAYLOAD_DB_PUSH: "false"
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/scs_cms
-      CORE_API_URL: http://core-api:8080
-    volumes:
-      - cms-media:/app/public/media
-    depends_on:
-      postgres:
-        condition: service_healthy
-      core-api:
-        condition: service_healthy
+      CORE_API_URL: ${CORE_API_URL}
     expose:
       - "3000"
     networks:
       - frontend
-      - backend
-
-  cms-migrate:
-    image: scs/web:${APP_VERSION:-local}
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
-    profiles:
-      - tools
-    command: ["pnpm", "payload", "migrate"]
-    environment:
-      NODE_ENV: production
-      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
-      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
-      PAYLOAD_DB_PROVIDER: ${PAYLOAD_DB_PROVIDER:-postgres}
-      PAYLOAD_DB_PUSH: "false"
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/scs_cms
-      CORE_API_URL: http://core-api:8080
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - backend
 
   proxy:
     image: nginx:1.28-alpine
@@ -119,14 +46,8 @@ services:
       - frontend
       - zimbra
 
-volumes:
-  postgres-data:
-  cms-media:
-
 networks:
   frontend:
-  backend:
-    internal: true
   zimbra:
     external: true
     name: zm-docker_zimbra_network

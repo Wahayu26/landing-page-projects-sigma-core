@@ -33,9 +33,6 @@ WORKDIR /app
 
 COPY --from=builder --chown=nextjs:nextjs /app /app
 
-RUN mkdir -p /app/public/media \ 
-   && chown -R nextjs:nextjs /app/public/media
-
 USER nextjs
 
 EXPOSE 3000
