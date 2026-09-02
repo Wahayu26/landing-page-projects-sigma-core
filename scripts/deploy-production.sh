@@ -20,10 +20,8 @@ fi
 compose=(docker compose --env-file "${env_file}" -f "${compose_file}")
 
 "${compose[@]}" config --quiet
-"${compose[@]}" build core-api web cms-migrate
-"${compose[@]}" up -d postgres
-"${compose[@]}" --profile tools run --rm cms-migrate
-"${compose[@]}" up -d core-api web proxy
+"${compose[@]}" build web
+"${compose[@]}" up -d web proxy
 "${compose[@]}" ps
 
 echo
