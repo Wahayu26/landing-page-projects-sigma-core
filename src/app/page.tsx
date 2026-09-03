@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { ContactForm } from "@/components/ContactForm";
 import { SectionHeading } from "@/components/SectionHeading";
+import { SolutionsSection } from "@/components/SolutionsSection";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
@@ -117,39 +118,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="solutions section" id="solusi">
-        <div className="shell">
-          <SectionHeading
-            eyebrow="What we do"
-            title="Solusi menyeluruh untuk setiap lapisan teknologi."
-            description="Dari infrastruktur hingga keamanan, dari cloud hingga managed services—semua dirancang untuk bekerja bersama."
-          />
-
-          <div className="solution-grid">
-            {solutions.map((solution) => {
-              const Icon = solution.icon;
-              return (
-                <Link className="solution-card" href={`/solusi/${solution.slug}`} key={solution.title}>
-                  <div className="solution-topline">
-                    <span>{solution.number}</span>
-                    <Icon size={26} strokeWidth={1.6} />
-                  </div>
-                  <div>
-                    <h3>{solution.title}</h3>
-                    <p>{solution.description}</p>
-                    <ul>
-                      {solution.items.map((item) => (
-                        <li key={item}><Check size={14} /> {item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <ArrowUpRight className="card-arrow" size={20} />
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      <SolutionsSection solutions={solutions} />
 
       <section className="integration" id="cara-kerja">
         <div className="integration-visual">

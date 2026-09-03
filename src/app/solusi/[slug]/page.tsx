@@ -71,6 +71,7 @@ export default async function SolutionDetailPage({ params }: Props) {
       <section className='detail-hero detail-hero--solution'>
         <Image
           src={solution.image ?? '/assets/server-room.jpg'}
+          unoptimized={Boolean(solution.image)}
           alt={solution.title}
           fill
           priority
@@ -169,7 +170,7 @@ export default async function SolutionDetailPage({ params }: Props) {
               </p>
               <h2>Lingkup dan pendekatan.</h2>
             </aside>
-            <RichContent data={solution.content} />
+            <RichContent data={solution.content} mediaAPIBase={solution.mediaAPIBase} />
           </div>
         </section>
       ) : null}
@@ -210,6 +211,7 @@ export default async function SolutionDetailPage({ params }: Props) {
                 <div key={partner.name}>
                   <Image
                     src={partner.logo}
+                    unoptimized
                     alt={`Logo ${partner.name}`}
                     width={260}
                     height={100}

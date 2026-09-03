@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { CompanyLogo } from "./CompanyLogo";
 import Link from "next/link";
 import { ArrowUpRight, ChevronDown, Menu } from "lucide-react";
 
@@ -17,17 +17,7 @@ export const SiteHeader: React.FC = async () => {
     <header className="site-header">
       <div className="header-inner shell">
         <Link className="brand" href="/" aria-label="Sigma Core Solusindo - halaman utama">
-          <Image
-            src="/assets/scs-icon.png"
-            width={640}
-            height={473}
-            alt="Ikon PT Sigma Core Solusindo"
-            priority
-          />
-          <span className="brand-copy">
-            <strong>Sigma Core</strong>
-            <small>Solusindo</small>
-          </span>
+          <CompanyLogo priority />
         </Link>
 
         <nav className="desktop-nav" aria-label="Navigasi utama">

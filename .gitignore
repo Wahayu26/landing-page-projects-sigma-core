@@ -18,3 +18,5 @@ tsconfig.tsbuildinfo
 *.log
 
 scs-company-profile.tar.gz
+
+.data/

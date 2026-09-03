@@ -1,0 +1,12 @@
+# Optional recovery overlay for a replacement scs-web proxy.
+# This does NOT recreate the old CMS or its database.
+# Do not start a second proxy while the legacy proxy owns ports 80/443.
+services:
+  proxy:
+    networks:
+      - legacy_cms
+
+networks:
+  legacy_cms:
+    external: true
+    name: scs-company-profile_frontend

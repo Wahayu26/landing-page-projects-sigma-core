@@ -1,4 +1,7 @@
-import type { LucideIcon } from "lucide-react";
+import "server-only";
+import { cache } from "react";
+import { Building2, CloudCog, Headphones, Network, PackageCheck, ShieldCheck, type LucideIcon } from "lucide-react";
+import { readPublishedCMSSolutions } from "./cms-solutions";
 
 import {
   partners as fallbackPartners,
@@ -53,6 +56,7 @@ export type SolutionView = {
   icon: LucideIcon;
   image: string | null;
   content: unknown | null;
+  mediaAPIBase?: string;
   partners: { name: string; logo: string; website: string | null }[];
 };
 
@@ -96,13 +100,30 @@ const fallbackSolutionView = (index: number): SolutionView => {
   };
 };
 
-export const getPublishedSolutions = async (): Promise<SolutionView[]> => {
-  return fallbackSolutions.map((_, index) => fallbackSolutionView(index));
+const iconMap: Record<string, LucideIcon> = {
+  infrastructure: Building2, network: Network, security: ShieldCheck,
+  cloud: CloudCog, "managed-service": Headphones, procurement: PackageCheck,
 };
 
+export const getPublishedSolutions = cache(async (): Promise<SolutionView[]> => {
+  const apiURL = process.env.CMS_API_URL?.trim();
+  // Explicit standalone/demo mode only. Never resurrect unpublished CMS records.
+  if (!apiURL) return fallbackSolutions.map((_, index) => fallbackSolutionView(index));
+  const solutions = await readPublishedCMSSolutions(apiURL, (url) => fetch(url, {
+    headers: { Accept: "application/json" },
+    credentials: "omit", redirect: "error", signal: AbortSignal.timeout(10_000),
+    next: { revalidate: 60, tags: ["cms-solutions"] },
+  }));
+  return solutions.map(({ iconKey, order: _order, ...solution }, index) => ({
+    ...solution,
+    number: String(index + 1).padStart(2, "0"),
+    categoryLabel: solutionCategoryLabels[solution.category],
+    icon: iconMap[iconKey] ?? Building2,
+  }));
+});
+
 export const getSolutionBySlug = async (slug: string): Promise<SolutionView | null> => {
-  const index = fallbackSolutions.findIndex((solution) => solution.slug === slug);
-  return index >= 0 ? fallbackSolutionView(index) : null;
+  return (await getPublishedSolutions()).find((solution) => solution.slug === slug) ?? null;
 };
 
 export const getPublishedPartners = async () => {
