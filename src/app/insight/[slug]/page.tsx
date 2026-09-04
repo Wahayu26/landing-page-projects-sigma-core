@@ -18,7 +18,7 @@ export const revalidate = 300;
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return (await getPublishedInsights()).map((insight) => ({
+  return (await getPublishedInsights(true)).map((insight) => ({
     slug: insight.slug,
   }));
 }
@@ -104,7 +104,7 @@ export default async function InsightDetailPage({ params }: Props) {
               Perspektif teknologi untuk keputusan bisnis yang lebih terukur.
             </p>
           </aside>
-          <RichContent data={insight.content} />
+          <RichContent data={insight.content} mediaAPIBase={insight.mediaAPIBase} />
         </div>
       </article>
 

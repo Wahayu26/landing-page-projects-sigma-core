@@ -17,7 +17,6 @@ import { SolutionsSection } from "@/components/SolutionsSection";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { process, values } from "@/content/site";
 import { getLandingContent } from "@/lib/landing-content";
 
 export const revalidate = 300;
@@ -96,18 +95,16 @@ export default async function Home() {
       <section className="about section" id="tentang">
         <div className="shell about-grid">
           <div>
-            <p className="eyebrow"><span /> Who we are</p>
+            <p className="eyebrow"><span /> {settings.about.eyebrow}</p>
             <h2 className="section-title">
-              Lebih dari sekadar
+              {settings.about.headline}
               <br />
-              <em>technology vendor.</em>
+              <em>{settings.about.highlight}</em>
             </h2>
           </div>
           <div className="about-copy">
             <p>
-              PT Sigma Core Solusindo membantu perusahaan membangun fondasi teknologi yang kuat
-              dan berkelanjutan. Bukan hanya menyediakan produk, kami memastikan setiap komponen
-              bekerja sebagai satu ekosistem yang utuh.
+              {settings.about.description}
             </p>
             <div className="about-metrics">
               {settings.companyFacts.map((fact) => (
@@ -135,14 +132,13 @@ export default async function Home() {
         </div>
 
         <div className="integration-content">
-          <p className="eyebrow light"><span /> How we work</p>
-          <h2 className="section-title light-title">Dari kebutuhan bisnis menuju sistem yang bekerja.</h2>
+          <p className="eyebrow light"><span /> {settings.workflow.eyebrow}</p>
+          <h2 className="section-title light-title">{settings.workflow.title}</h2>
           <p className="integration-intro">
-            Kami menyatukan beragam teknologi menjadi ekosistem yang seamless, optimal, dan mudah
-            dikembangkan.
+            {settings.workflow.description}
           </p>
           <div className="process-list">
-            {process.map((item) => (
+            {settings.workflow.steps.map((item) => (
               <div className="process-item" key={item.step}>
                 <span>{item.step}</span>
                 <div><h3>{item.title}</h3><p>{item.text}</p></div>
@@ -156,14 +152,14 @@ export default async function Home() {
       <section className="values section">
         <div className="shell">
           <SectionHeading
-            eyebrow="Why SCS"
-            title="Dibangun untuk menjadi partner, bukan sekadar penyedia."
-            description="Setiap proyek dijalankan dengan kombinasi keahlian teknis, disiplin implementasi, dan pemahaman terhadap tujuan bisnis."
+            eyebrow={settings.strengths.eyebrow}
+            title={settings.strengths.title}
+            description={settings.strengths.description}
             rowClassName="mb-18"
           />
 
           <div className="value-grid">
-            {values.map((value, index) => (
+            {settings.strengths.items.map((value, index) => (
               <article key={value.title}>
                 <span>0{index + 1}</span>
                 <h3>{value.title}</h3>

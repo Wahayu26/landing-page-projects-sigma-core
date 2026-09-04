@@ -20,7 +20,7 @@ export const revalidate = 300;
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  const solutions = await getPublishedSolutions();
+  const solutions = await getPublishedSolutions(true);
   return solutions.map((solution) => ({ slug: solution.slug }));
 }
 

@@ -18,7 +18,7 @@ export const revalidate = 300;
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return (await getPublishedProjects()).map((project) => ({
+  return (await getPublishedProjects(true)).map((project) => ({
     slug: project.slug,
   }));
 }
@@ -120,7 +120,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                 <span>{section.number}</span>
                 <h3>{section.label}</h3>
                 {section.data ? (
-                  <RichContent data={section.data} />
+                  <RichContent data={section.data} mediaAPIBase={project.mediaAPIBase} />
                 ) : (
                   <p>
                     Detail {section.label.toLowerCase()} dapat dilengkapi

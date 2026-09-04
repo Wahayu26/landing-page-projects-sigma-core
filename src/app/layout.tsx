@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
+import { PreviewBanner } from "@/components/PreviewBanner";
 import "./globals.css";
 import "./services-refinement.css";
 import "./navigation-refinement.css";
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000"
   ),
@@ -38,6 +40,13 @@ export const metadata: Metadata = {
   },
 };
 
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    ...baseMetadata,
+    ...((await draftMode()).isEnabled ? { robots: { index: false, follow: false } } : {}),
+  };
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,7 +54,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>{children}<PreviewBanner /></body>
     </html>
   );
 }

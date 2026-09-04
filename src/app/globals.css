@@ -682,3 +682,34 @@ footer { padding: 72px 0 28px; color: rgba(255,255,255,.72); background: #050d18
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+.cms-preview-banner {
+  position: fixed;
+  z-index: 10000;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 18px;
+  color: #fff;
+  background: #102d47;
+  border: 1px solid #67d9e8;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px #0005;
+  font: 14px/1.5 Arial, sans-serif;
+}
+
+.cms-preview-banner span { flex: 1 1 300px; }
+.cms-preview-banner a { color: #8de8f3; text-decoration: underline; }
+.cms-preview-banner form { margin: 0; }
+.cms-preview-banner button {
+  padding: 8px 12px;
+  color: #102d47;
+  background: #fff;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+}

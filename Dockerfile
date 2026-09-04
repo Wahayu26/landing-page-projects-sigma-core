@@ -13,7 +13,11 @@ RUN pnpm install --frozen-lockfile
 FROM dependencies AS builder
 
 ARG NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+ARG CMS_API_URL=http://localhost:3101/api
+ARG CMS_ADMIN_URL=http://localhost:3101/admin
 ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
+ENV CMS_API_URL=$CMS_API_URL
+ENV CMS_ADMIN_URL=$CMS_ADMIN_URL
 ENV NODE_ENV=production
 
 COPY . .

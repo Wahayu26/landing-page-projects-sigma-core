@@ -31,9 +31,9 @@ export function safeContentLink(value: unknown): string | null {
   } catch { return null; }
 }
 
-export function mapCMSSolution(value: unknown, base: URL) {
+export function mapCMSSolution(value: unknown, base: URL, includeDrafts = false) {
   const doc = row(value);
-  if (doc.published !== true || doc._status !== "published") return null;
+  if (!includeDrafts && (doc.published !== true || doc._status !== "published")) return null;
   const slug = text(doc.slug);
   const title = text(doc.title);
   const description = text(doc.summary);
@@ -54,7 +54,7 @@ export function mapCMSSolution(value: unknown, base: URL) {
     mediaAPIBase: base.href,
     content: doc.content ?? null,
     partners: rows(doc.relatedPartners).flatMap((partner) => {
-      if (partner.published !== true || partner._status !== "published") return [];
+      if (!includeDrafts && (partner.published !== true || partner._status !== "published")) return [];
       const logo = cmsMediaURL(partner.logo, base);
       return logo && text(partner.name) ? [{ name: text(partner.name), logo, website: safeContentLink(partner.website) }] : [];
     }),
