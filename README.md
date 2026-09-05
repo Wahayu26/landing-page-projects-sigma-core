@@ -7,10 +7,11 @@ that connects directly to PostgreSQL.
 ## Architecture
 
 ```text
-Browser -> Next.js website -> Payload REST API -> PostgreSQL
-                 ^                 |
-                 |                 +-> signed preview URL
-                 +---- signed cache-revalidation webhook
+Browser -> Next.js website -> Payload REST API -> PostgreSQL (scs_cms)
+                 |  ^                 |
+                 |  |                 +-> signed preview URL
+                 |  +---- signed cache-revalidation webhook
+                 +------> Core API -> PostgreSQL (scs_core.inquiries)
 ```
 
 Published website settings, solutions, partners, projects and insights are read
@@ -41,7 +42,12 @@ the full content workflow.
 | `CMS_ADMIN_URL` | CMS admin URL used by the preview banner |
 | `CMS_PREVIEW_SECRET` | Shared secret for draft preview |
 | `CMS_REVALIDATE_SECRET` | Shared secret for publish-time cache invalidation |
-| `CORE_API_URL` | Reserved server-side Core API origin |
+| `CORE_API_URL` | Internal Core API origin used by the consultation form |
+
+The public consultation endpoint validates and rate-limits input before sending
+it to the Core API. In production the website also joins the internal
+`SCS_BACKEND_NETWORK`; the Core API and its database are never exposed directly
+to the browser.
 
 Keep both shared secrets server-side and use different random values. The CMS
 uses matching values under `WEBSITE_PREVIEW_SECRET` and

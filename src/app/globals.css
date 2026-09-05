@@ -338,6 +338,9 @@ button, input, textarea, select { font: inherit; }
 .contact-form input:focus, .contact-form textarea:focus, .contact-form select:focus { border-color: var(--cyan); background: rgba(255,255,255,.12); }
 .contact-form .button { border: 0; cursor: pointer; }
 .contact-form .button:disabled { cursor: wait; opacity: .72; }
+.contact-form .form-honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.contact-form .form-message.success { color: #7ef0cf; }
+.contact-form .form-message.error { color: #ffd0c5; }
 .form-message { margin: 0; font-size: 13px; line-height: 1.5; }
 .form-message.success { color: #7bf0c7; }
 .form-message.error { color: #ffd0c2; }

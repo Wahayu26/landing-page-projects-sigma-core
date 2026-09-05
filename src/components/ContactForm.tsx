@@ -18,12 +18,55 @@ const readInterestFromQuery = (solutions: { slug: string; title: string }[], fal
   return isKnownSolution && queryInterest ? queryInterest : fallback;
 };
 
-export const ContactForm: React.FC<ContactFormProps> = ({ solutions = [], defaultInterest = "" }) => {
+export const ContactForm: React.FC<ContactFormProps> = ({ solutions = [], defaultInterest = "", sourcePage }) => {
   const [interest, setInterest] = useState(() => readInterestFromQuery(solutions, defaultInterest));
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
   const helperTextId = useId();
 
+  async function submitInquiry(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (status === "submitting") return;
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const search = new URLSearchParams(window.location.search);
+    setStatus("submitting");
+    setMessage("Mengirim konsultasi Anda…");
+
+    try {
+      const response = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          company: formData.get("company"),
+          email: formData.get("email"),
+          phone: formData.get("phone"),
+          interestSolution: formData.get("interestSolution"),
+          preferredContact: formData.get("preferredContact"),
+          message: formData.get("message"),
+          website: formData.get("website"),
+          sourcePage: sourcePage || window.location.pathname,
+          utmSource: search.get("utm_source"),
+          utmCampaign: search.get("utm_campaign"),
+        }),
+      });
+      const result = await response.json() as { message?: string; reference?: string };
+      if (!response.ok || !result.reference) throw new Error(result.message || "Konsultasi belum dapat dikirim.");
+
+      form.reset();
+      setInterest(defaultInterest);
+      setStatus("success");
+      setMessage(`Konsultasi berhasil diterima. Nomor referensi: ${result.reference}`);
+    } catch (error) {
+      setStatus("error");
+      setMessage(error instanceof Error ? error.message : "Konsultasi belum dapat dikirim. Silakan coba kembali.");
+    }
+  }
+
   return (
-    <form className="contact-form" onSubmit={(event) => event.preventDefault()}>
+    <form className="contact-form" onSubmit={submitInquiry}>
       <div className="form-row">
         <label>
           Nama
@@ -71,11 +114,15 @@ export const ContactForm: React.FC<ContactFormProps> = ({ solutions = [], defaul
         Kebutuhan Anda
         <textarea name="message" rows={4} required minLength={10} />
       </label>
-      <button className="button button-primary" type="submit" disabled aria-describedby={helperTextId}>
-        Kirim konsultasi <ArrowUpRight size={18} />
+      <label className="form-honeypot" aria-hidden="true">
+        Website
+        <input name="website" type="text" tabIndex={-1} autoComplete="off" />
+      </label>
+      <button className="button button-primary" type="submit" disabled={status === "submitting"} aria-describedby={helperTextId}>
+        {status === "submitting" ? "Mengirim…" : "Kirim konsultasi"} <ArrowUpRight size={18} />
       </button>
-      <p className="form-message" id={helperTextId} role="status">
-        Formulir konsultasi akan segera aktif. Silakan hubungi kami langsung melalui WhatsApp atau email untuk saat ini.
+      <p className={`form-message${status === "success" ? " success" : status === "error" ? " error" : ""}`} id={helperTextId} role="status" aria-live="polite">
+        {message || "Data Anda hanya digunakan untuk menindaklanjuti kebutuhan konsultasi."}
       </p>
     </form>
   );

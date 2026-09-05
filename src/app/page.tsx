@@ -18,6 +18,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { getLandingContent } from "@/lib/landing-content";
+import { googleMapsSearchURL } from "@/lib/inquiry";
 
 export const revalidate = 300;
 
@@ -45,6 +46,7 @@ export default async function Home() {
   const { insights, partners, projects, settings, solutions } = await getLandingContent();
   const partnerRows = [partners.slice(0, 10), partners.slice(10)];
   const phoneHref = `tel:${settings.contact.phone.replace(/[^+\d]/g, "")}`;
+  const mapsHref = googleMapsSearchURL(settings.contact.address);
 
   return (
     <main>
@@ -266,7 +268,7 @@ export default async function Home() {
             <div className="contact-details">
               <a href={`mailto:${settings.contact.email}`}><Mail size={20} /> {settings.contact.email}</a>
               <a href={phoneHref}><Phone size={20} /> {settings.contact.phone}</a>
-              <p><MapPin size={20} /> {settings.contact.address}</p>
+              <a href={mapsHref} target="_blank" rel="noopener noreferrer"><MapPin size={20} /> {settings.contact.address}</a>
             </div>
           </div>
           <ContactForm solutions={solutions.map((solution) => ({ slug: solution.slug, title: solution.title }))} sourcePage="homepage" />

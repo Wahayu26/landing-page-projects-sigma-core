@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { cmsAPIBase, cmsMediaURL, mapCMSSolution, readPublishedCMSSolutions, safeContentLink } from '../src/lib/cms-solutions.ts';
+import { coreInquiryURL, googleMapsSearchURL, parseInquiryPayload } from '../src/lib/inquiry.ts';
 
 const base = cmsAPIBase('https://cms.example.test/api');
 const published = (extra = {}) => ({ slug: 'it-infrastructure', title: 'IT Infrastructure', summary: 'Ringkasan', published: true, _status: 'published', ...extra });
@@ -55,4 +56,35 @@ test('unsafe CMS endpoints and content links are rejected', () => {
   for (const url of ['file:///api', 'https://user:pass@cms.example/api', 'https://cms.example/api?q=1']) assert.throws(() => cmsAPIBase(url));
   for (const link of ['javascript:alert(1)', 'data:text/html,bad', '//evil.test', '/\\evil.test', 'java\nscript:bad']) assert.equal(safeContentLink(link), null);
   for (const link of ['/solusi/cloud', '#kontak', 'https://sigmacore.id', 'mailto:sales@sigmacore.id']) assert.equal(safeContentLink(link), link);
+});
+
+test('consultation payload validation normalizes safe public input', () => {
+  const result = parseInquiryPayload({
+    name: ' Wahyu Satria ', company: ' Sigma Core ', email: 'WAHYU@EXAMPLE.COM',
+    phone: '+62 851-5855-8791', message: ' Membutuhkan solusi keamanan jaringan. ',
+    interestSolution: 'cybersecurity', preferredContact: 'whatsapp', sourcePage: 'homepage',
+  });
+  assert.equal(result.ok, true);
+  if (result.ok) {
+    assert.equal(result.value.name, 'Wahyu Satria');
+    assert.equal(result.value.email, 'wahyu@example.com');
+    assert.equal(result.value.interestSolution, 'cybersecurity');
+  }
+});
+
+test('consultation payload rejects malformed or oversized input', () => {
+  for (const payload of [
+    null,
+    { name: 'A', company: 'SCS', email: 'bad', message: 'short', preferredContact: 'fax' },
+    { name: 'Valid Name', company: 'SCS', email: 'valid@example.com', message: 'A'.repeat(5001), preferredContact: 'email' },
+    { name: 'Valid Name', company: 'SCS', email: 'valid@example.com', message: 'Valid consultation message', interestSolution: '../admin', preferredContact: 'email' },
+  ]) assert.equal(parseInquiryPayload(payload).ok, false);
+});
+
+test('core inquiry and Google Maps URLs stay constrained and encoded', () => {
+  assert.equal(coreInquiryURL('http://core-api:8080').href, 'http://core-api:8080/api/v1/inquiries');
+  assert.equal(googleMapsSearchURL('Plaza Aminta, Jakarta Selatan'), 'https://www.google.com/maps/search/?api=1&query=Plaza%20Aminta%2C%20Jakarta%20Selatan');
+  for (const value of ['file:///tmp/api', 'https://user:pass@example.test', 'https://example.test?q=1']) {
+    assert.throws(() => coreInquiryURL(value));
+  }
 });

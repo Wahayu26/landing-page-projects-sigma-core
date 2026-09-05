@@ -29,7 +29,10 @@ const { RichContent } = await import(componentModule('src/components/RichContent
   'next/image': imageInterop,
 }));
 const companyLogo = componentModule('src/components/CompanyLogo.tsx', { 'next/image': imageInterop });
-const { FooterContent } = await import(componentModule('src/components/FooterContent.tsx', { './CompanyLogo': companyLogo }));
+const { FooterContent } = await import(componentModule('src/components/FooterContent.tsx', {
+  './CompanyLogo': companyLogo,
+  '@/lib/inquiry': pathToFileURL(resolve('src/lib/inquiry.ts')).href,
+}));
 const { WhatsAppButton } = await import(componentModule('src/components/WhatsAppButton.tsx'));
 const render = (component, props) => renderToStaticMarkup(React.createElement(component, props));
 
@@ -40,6 +43,8 @@ test('compact footer renders supplied full logo, CMS contacts and real navigatio
   assert.match(html, /mailto:sales@sigmacore.id/);
   assert.match(html, /tel:085158558791/);
   assert.match(html, /Plaza Aminta, Jakarta Selatan/);
+  assert.match(html, /https:\/\/www\.google\.com\/maps\/search\/\?api=1&amp;query=Plaza%20Aminta%2C%20Jakarta%20Selatan/);
+  assert.match(html, /target="_blank"/);
   assert.match(html, /href="\/insight#insight-list"/);
   assert.match(html, /Hubungi Kami/);
   assert.doesNotMatch(html, /Privacy Policy|Terms of Service|href="javascript:/);

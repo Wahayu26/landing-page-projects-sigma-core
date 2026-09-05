@@ -25,6 +25,7 @@ services:
       - "3000"
     networks:
       - frontend
+      - backend
 
   proxy:
     image: nginx:1.28-alpine
@@ -55,6 +56,9 @@ services:
 networks:
   frontend:
     name: ${SCS_EDGE_NETWORK:-scs-edge}
+  backend:
+    external: true
+    name: ${SCS_BACKEND_NETWORK:-scs-company-profile_backend}
   zimbra:
     external: true
     name: zm-docker_zimbra_network

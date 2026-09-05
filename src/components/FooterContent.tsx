@@ -1,6 +1,7 @@
 import { CompanyLogo } from "./CompanyLogo";
 import Link from "next/link";
 import { ArrowUp, ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import { googleMapsSearchURL } from "@/lib/inquiry";
 
 type FooterContentProps = {
   contact: { email: string; phone: string; address: string };
@@ -9,6 +10,7 @@ type FooterContentProps = {
 
 export function FooterContent({ contact, links }: FooterContentProps) {
   const phoneHref = `tel:${contact.phone.replace(/[^+\d]/g, "")}`;
+  const mapsHref = googleMapsSearchURL(contact.address);
 
   return (
     <footer className="site-footer" aria-label="Informasi perusahaan">
@@ -31,7 +33,7 @@ export function FooterContent({ contact, links }: FooterContentProps) {
           <address>
             <a href={`mailto:${contact.email}`}><span className="footer-contact__icon"><Mail size={17} aria-hidden="true" /></span><span>{contact.email}</span></a>
             <a href={phoneHref}><span className="footer-contact__icon"><Phone size={17} aria-hidden="true" /></span><span>{contact.phone}</span></a>
-            <p><span className="footer-contact__icon"><MapPin size={18} aria-hidden="true" /></span><span>{contact.address}</span></p>
+            <a href={mapsHref} target="_blank" rel="noopener noreferrer"><span className="footer-contact__icon"><MapPin size={18} aria-hidden="true" /></span><span>{contact.address}</span></a>
           </address>
         </div>
       </div>
