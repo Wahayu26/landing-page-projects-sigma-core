@@ -259,12 +259,9 @@ export default async function Home() {
       <section className="contact section" id="kontak">
         <div className="shell contact-card">
           <div className="contact-copy">
-            <p className="eyebrow light"><span /> Let&apos;s build what&apos;s next</p>
-            <h2>Siap membangun fondasi teknologi berikutnya?</h2>
-            <p>
-              Ceritakan kebutuhan infrastruktur dan sistem Anda. Tim kami siap membantu menyusun
-              solusi yang tepat.
-            </p>
+            <p className="eyebrow light"><span /> {settings.consultation.eyebrow}</p>
+            <h2>{settings.consultation.headline}</h2>
+            <p>{settings.consultation.description}</p>
             <div className="contact-details">
               <a href={`mailto:${settings.contact.email}`}><Mail size={20} /> {settings.contact.email}</a>
               <a href={phoneHref}><Phone size={20} /> {settings.contact.phone}</a>

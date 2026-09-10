@@ -99,6 +99,7 @@ export type InsightView = {
 export type SiteSettingsView = {
   hero: { eyebrow: string; headline: string; highlight: string; description: string };
   contact: { email: string; phone: string; address: string };
+  consultation: { eyebrow: string; headline: string; description: string };
   companyFacts: { value: string; label: string }[];
   seo: { title: string; description: string };
   about: { eyebrow: string; headline: string; highlight: string; description: string };
@@ -127,6 +128,11 @@ const fallbackSettings: SiteSettingsView = {
     email: "admin@sigmacore.id",
     phone: "0851 5855 8791",
     address: "Plaza Aminta Lt. 5/504, Jl. TB. Simatupang Kav. 10, Jakarta Selatan",
+  },
+  consultation: {
+    eyebrow: "Let's build what's next",
+    headline: "Siap membangun fondasi teknologi berikutnya?",
+    description: "Ceritakan kebutuhan infrastruktur dan sistem Anda. Tim kami siap membantu menyusun solusi yang tepat.",
   },
   companyFacts: [
     { value: "06", label: "Portofolio solusi inti" },
@@ -243,6 +249,12 @@ function mapSettings(value: unknown): SiteSettingsView {
   const doc = row(value);
   const hero = requiredGroup(doc, "hero", ["eyebrow", "headline", "highlight", "description"]);
   const contact = requiredGroup(doc, "contact", ["email", "phone", "address"]);
+  const consultationSource = row(doc.consultation);
+  const consultation = {
+    eyebrow: text(consultationSource.eyebrow) || fallbackSettings.consultation.eyebrow,
+    headline: text(consultationSource.headline) || fallbackSettings.consultation.headline,
+    description: text(consultationSource.description) || fallbackSettings.consultation.description,
+  };
   const seo = requiredGroup(doc, "seo", ["title", "description"]);
   const about = requiredGroup(doc, "about", ["eyebrow", "headline", "highlight", "description"]);
   const workflow = requiredGroup(doc, "workflow", ["eyebrow", "title", "description"]);
@@ -261,6 +273,7 @@ function mapSettings(value: unknown): SiteSettingsView {
   return {
     hero: hero as SiteSettingsView["hero"],
     contact: contact as SiteSettingsView["contact"],
+    consultation,
     companyFacts: rows(doc.companyFacts).flatMap((item) => {
       const valueText = text(item.value); const label = text(item.label);
       return valueText && label ? [{ value: valueText, label }] : [];
