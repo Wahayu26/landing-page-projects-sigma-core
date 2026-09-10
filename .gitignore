@@ -1,14 +1,22 @@
-# dependencies
-/node_modules
+.next/
+node_modules/
+.pnpm-store/
 
-# Next.js build output
-/.next
-/out
-
-# local and generated files
-.DS_Store
-*.log
-*.tsbuildinfo
-.env*
+.env
+.env.*
 !.env.example
-/tmp
+!.env.production.example
+
+.rollback/
+
+infra/nginx/certs/
+*.pem
+*.key
+*.crt
+
+tsconfig.tsbuildinfo
+*.log
+
+scs-company-profile.tar.gz
+
+.data/

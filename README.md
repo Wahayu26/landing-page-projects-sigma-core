@@ -1,30 +1,65 @@
-# PT Sigma Core Solusindo - Company Profile Landing Page
+# Sigma Core Company Profile Website
 
-Interactive landing-page mockup based on the 2026 company profile. The visual direction combines SCS's dark blue, cyan, and green technology identity with the clean navigation, cinematic hero, pill CTAs, and generous spacing of the supplied Bank Jakarta reference.
+Standalone Next.js public website for PT Sigma Core Solusindo. Payload CMS lives
+in the separate `scs-company-profile-cms` repository and is the only application
+that connects directly to PostgreSQL.
 
-## Run locally
+## Architecture
 
-```bash
+```text
+Browser -> Next.js website -> Payload REST API -> PostgreSQL (scs_cms)
+                 |  ^                 |
+                 |  |                 +-> signed preview URL
+                 |  +---- signed cache-revalidation webhook
+                 +------> Core API -> PostgreSQL (scs_core.inquiries)
+```
+
+Published website settings, solutions, partners, projects and insights are read
+server-side from `CMS_API_URL`. When that variable is configured, the CMS is
+authoritative: empty or unavailable CMS data is not silently replaced by bundled
+records. The bundled content remains available only for standalone UI development.
+
+## Local development
+
+Requirements: Node.js 22 and pnpm 10.
+
+```powershell
+Copy-Item .env.example .env.local
 pnpm install
 pnpm dev
 ```
 
-Open `http://localhost:3000`.
+The website runs at `http://localhost:3000`. Run the separate CMS repository on
+`http://localhost:3101`, then set `CMS_API_URL=http://localhost:3101/api` to test
+the full content workflow.
 
-## Recommended production architecture
+## Environment contract
 
-- **Public website:** Next.js App Router with Server Components, responsive images, SEO metadata, and ISR where useful.
-- **CMS:** Payload CMS inside the same Next.js application, backed by PostgreSQL. Suggested collections: Pages, Solutions, Partners, Articles, Media, Site Settings, and Users.
-- **Business backend:** Spring Boot as a separate service only for domain logic, enterprise integrations, quotation workflows, customer portals, or data that should not live in the CMS.
-- **Integration:** Next.js reads editorial content directly from Payload. Next.js calls Spring Boot through an internal REST API for business operations. Spring Boot should not become the storage layer for page copy and media.
-- **Deployment:** Containerize the Next.js/Payload and Spring Boot services separately, place both behind a reverse proxy, and use object storage for uploaded media.
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_SERVER_URL` | Canonical public website origin |
+| `CMS_API_URL` | Payload REST base URL, including `/api` |
+| `CMS_ADMIN_URL` | CMS admin URL used by the preview banner |
+| `CMS_PREVIEW_SECRET` | Shared secret for draft preview |
+| `CMS_REVALIDATE_SECRET` | Shared secret for publish-time cache invalidation |
+| `CORE_API_URL` | Internal Core API origin used by the consultation form |
 
-For a company-profile-only first release, Next.js + Payload + PostgreSQL is enough. Add Spring Boot when there is a real business workflow or external-system integration to own.
+The public consultation endpoint validates and rate-limits input before sending
+it to the Core API. In production the website also joins the internal
+`SCS_BACKEND_NETWORK`; the Core API and its database are never exposed directly
+to the browser.
 
-## Current prototype scope
+Keep both shared secrets server-side and use different random values. The CMS
+uses matching values under `WEBSITE_PREVIEW_SECRET` and
+`WEBSITE_REVALIDATE_SECRET`.
 
-- One polished public landing page
-- Content kept in `content/site.ts` so the future CMS model is explicit
-- Brand imagery and logo extracted from the supplied company-profile PDF
-- No CMS admin, authentication, database, or Spring Boot service yet
+## Checks
 
+```powershell
+pnpm test
+pnpm typecheck
+pnpm build
+```
+
+See [CMS integration](docs/CMS-INTEGRATION.md) for preview, publishing and the
+two-repository deployment order.

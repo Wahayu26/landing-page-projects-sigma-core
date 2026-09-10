@@ -1,0 +1,64 @@
+name: scs-web
+
+services:
+  web:
+    image: scs/web:${APP_VERSION:-local}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+        CMS_API_URL: ${CMS_API_URL}
+        CMS_ADMIN_URL: ${CMS_ADMIN_URL}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+      CMS_API_URL: ${CMS_API_URL}
+      CMS_ADMIN_URL: ${CMS_ADMIN_URL}
+      CMS_PREVIEW_SECRET: ${CMS_PREVIEW_SECRET}
+      CMS_REVALIDATE_SECRET: ${CMS_REVALIDATE_SECRET}
+      CORE_API_URL: ${CORE_API_URL}
+    expose:
+      - "3000"
+    networks:
+      - frontend
+      - backend
+
+  proxy:
+    image: nginx:1.28-alpine
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    volumes:
+      - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /opt/certbot/letsencrypt:/etc/letsencrypt:ro
+
+    depends_on:
+      web:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/nginx-health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - frontend
+      - zimbra
+
+networks:
+  frontend:
+    name: ${SCS_EDGE_NETWORK:-scs-edge}
+  backend:
+    external: true
+    name: ${SCS_BACKEND_NETWORK:-scs-company-profile_backend}
+  zimbra:
+    external: true
+    name: zm-docker_zimbra_network

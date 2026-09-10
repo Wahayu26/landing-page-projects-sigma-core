@@ -1,0 +1,11 @@
+.git
+.next
+.rollback
+.pnpm-store
+node_modules
+.env
+.env.local
+.env.production
+*.log
+tsconfig.tsbuildinfo
+
