@@ -10,18 +10,11 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { WhatsAppButton } from '@/components/WhatsAppButton';
 import {
   getInsightBySlug,
-  getPublishedInsights,
   getSiteSettings,
 } from '@/lib/landing-content';
 
 export const revalidate = 300;
 type Props = { params: Promise<{ slug: string }> };
-
-export async function generateStaticParams() {
-  return (await getPublishedInsights(true)).map((insight) => ({
-    slug: insight.slug,
-  }));
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const insight = await getInsightBySlug((await params).slug);
