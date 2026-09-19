@@ -54,8 +54,8 @@ export default async function Home() {
 
       <section className="hero" id="top">
         <Image
-          src="/assets/connected-city.jpg"
-          alt="Kota digital yang saling terhubung"
+          src={settings.hero.image || "/assets/connected-city.jpg"}
+          alt={settings.hero.imageAlt}
           fill
           priority
           sizes="100vw"
@@ -77,19 +77,19 @@ export default async function Home() {
             <p className="hero-lead">{settings.hero.description}</p>
             <div className="hero-actions">
               <Link className="button button-primary" href="#kontak">
-                Diskusikan kebutuhan <ArrowUpRight size={18} />
+                {settings.hero.primaryCTA} <ArrowUpRight size={18} />
               </Link>
               <Link className="button button-ghost" href="#solusi">
-                Jelajahi solusi <ArrowDown size={18} />
+                {settings.hero.secondaryCTA} <ArrowDown size={18} />
               </Link>
             </div>
           </div>
 
           <div className="hero-proof" aria-label="Nilai utama perusahaan">
-            <span>Reliable</span>
-            <span>Secure</span>
-            <span>Scalable</span>
-            <span>Customer-focused</span>
+            <span>{settings.hero.proofOne}</span>
+            <span>{settings.hero.proofTwo}</span>
+            <span>{settings.hero.proofThree}</span>
+            <span>{settings.hero.proofFour}</span>
           </div>
         </div>
       </section>
@@ -117,19 +117,19 @@ export default async function Home() {
         </div>
       </section>
 
-      <SolutionsSection solutions={solutions} />
+      <SolutionsSection solutions={solutions} content={settings.solutionsSection} />
 
       <section className="integration" id="cara-kerja">
         <div className="integration-visual">
           <Image
-            src="/assets/server-room.jpg"
-            alt="Infrastruktur data center modern"
+            src={settings.workflow.image || "/assets/server-room.jpg"}
+            alt={settings.workflow.imageAlt}
             fill
             sizes="(max-width: 900px) 100vw, 46vw"
           />
           <div className="visual-label">
             <Sparkles size={18} />
-            <span>End-to-end system integration</span>
+            <span>{settings.workflow.badge}</span>
           </div>
         </div>
 
@@ -176,9 +176,9 @@ export default async function Home() {
         <section className="projects section" id="proyek">
           <div className="shell">
             <SectionHeading
-              eyebrow="Selected projects"
-              title="Implementasi yang memberi dampak nyata."
-              description="Beberapa solusi yang kami rancang untuk menjawab kebutuhan operasional dan pertumbuhan bisnis."
+              eyebrow={settings.projectsSection.eyebrow}
+              title={settings.projectsSection.title}
+              description={settings.projectsSection.description}
               rowClassName="mb-14"
             />
             <div className="project-grid">
@@ -190,7 +190,7 @@ export default async function Home() {
                     <p>{project.industry}</p>
                   </div>
                   <div className="project-card__content">
-                    <span>{project.client || "Confidential client"}</span>
+                    <span>{project.client || settings.projectsSection.confidentialLabel}</span>
                     <h3>{project.title}</h3>
                     <p>{project.summary}</p>
                     {project.highlights.length > 0 && <ul>{project.highlights.map((highlight) => <li key={highlight}><Check size={13} /> {highlight}</li>)}</ul>}
@@ -198,16 +198,16 @@ export default async function Home() {
                 </Link>
               ))}
             </div>
-            <Link className="section-link" href="/proyek">Lihat seluruh proyek <ArrowUpRight size={17} /></Link>
+            <Link className="section-link" href="/proyek">{settings.projectsSection.linkLabel} <ArrowUpRight size={17} /></Link>
           </div>
         </section>
       )}
 
       <section className="ecosystem section" id="ekosistem">
         <div className="shell ecosystem-heading">
-          <p className="eyebrow light"><span /> Technology ecosystem</p>
-          <h2 className="section-title light-title">Bekerja dengan teknologi terdepan.</h2>
-          <p>Kami merancang solusi menggunakan ekosistem teknologi enterprise yang sudah teruji.</p>
+          <p className="eyebrow light"><span /> {settings.ecosystemSection.eyebrow}</p>
+          <h2 className="section-title light-title">{settings.ecosystemSection.title}</h2>
+          <p>{settings.ecosystemSection.description}</p>
         </div>
         <div className="partner-marquee" aria-label="Daftar mitra teknologi">
           {partnerRows.map((row, rowIndex) => (
@@ -232,9 +232,9 @@ export default async function Home() {
         <section className="insights section" id="insight">
           <div className="shell">
             <SectionHeading
-              eyebrow="Latest insight"
-              title="Perspektif untuk keputusan teknologi yang lebih baik."
-              description="Insight terbaru dari tim SCS seputar infrastruktur, keamanan, cloud, dan transformasi digital."
+              eyebrow={settings.insightsSection.eyebrow}
+              title={settings.insightsSection.title}
+              description={settings.insightsSection.description}
               rowClassName="mb-14"
             />
             <div className="insight-grid">
@@ -251,7 +251,7 @@ export default async function Home() {
                 </Link>
               ))}
             </div>
-            <Link className="section-link" href="/insight">Baca seluruh insight <ArrowUpRight size={17} /></Link>
+            <Link className="section-link" href="/insight">{settings.insightsSection.linkLabel} <ArrowUpRight size={17} /></Link>
           </div>
         </section>
       )}
@@ -268,11 +268,11 @@ export default async function Home() {
               <a href={mapsHref} target="_blank" rel="noopener noreferrer"><MapPin size={20} /> {settings.contact.address}</a>
             </div>
           </div>
-          <ContactForm solutions={solutions.map((solution) => ({ slug: solution.slug, title: solution.title }))} sourcePage="homepage" />
+          <ContactForm solutions={solutions.map((solution) => ({ slug: solution.slug, title: solution.title }))} sourcePage="homepage" content={settings.contactForm} />
         </div>
       </section>
 
-      <WhatsAppButton phone={settings.contact.phone} />
+      <WhatsAppButton phone={settings.contact.phone} {...settings.whatsapp} />
 
       <SiteFooter />
     </main>

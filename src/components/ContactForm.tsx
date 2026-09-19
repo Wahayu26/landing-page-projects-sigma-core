@@ -7,6 +7,7 @@ type ContactFormProps = {
   solutions?: { slug: string; title: string }[];
   defaultInterest?: string;
   sourcePage?: string;
+  content?: { submitLabel: string; privacyText: string; unknownSolutionLabel: string };
 };
 
 const readInterestFromQuery = (solutions: { slug: string; title: string }[], fallback: string) => {
@@ -18,7 +19,7 @@ const readInterestFromQuery = (solutions: { slug: string; title: string }[], fal
   return isKnownSolution && queryInterest ? queryInterest : fallback;
 };
 
-export const ContactForm: React.FC<ContactFormProps> = ({ solutions = [], defaultInterest = "", sourcePage }) => {
+export const ContactForm: React.FC<ContactFormProps> = ({ solutions = [], defaultInterest = "", sourcePage, content = { submitLabel: "Kirim konsultasi", privacyText: "Data Anda hanya digunakan untuk menindaklanjuti kebutuhan konsultasi.", unknownSolutionLabel: "Belum menentukan solusi" } }) => {
   const [interest, setInterest] = useState(() => readInterestFromQuery(solutions, defaultInterest));
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -92,7 +93,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ solutions = [], defaul
           <label>
             Solusi yang diminati
             <select name="interestSolution" value={interest} onChange={(event) => setInterest(event.target.value)}>
-              <option value="">Belum menentukan solusi</option>
+              <option value="">{content.unknownSolutionLabel}</option>
               {solutions.map((solution) => (
                 <option value={solution.slug} key={solution.slug}>{solution.title}</option>
               ))}
@@ -119,10 +120,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ solutions = [], defaul
         <input name="website" type="text" tabIndex={-1} autoComplete="off" />
       </label>
       <button className="button button-primary" type="submit" disabled={status === "submitting"} aria-describedby={helperTextId}>
-        {status === "submitting" ? "Mengirim…" : "Kirim konsultasi"} <ArrowUpRight size={18} />
+        {status === "submitting" ? "Mengirim…" : content.submitLabel} <ArrowUpRight size={18} />
       </button>
       <p className={`form-message${status === "success" ? " success" : status === "error" ? " error" : ""}`} id={helperTextId} role="status" aria-live="polite">
-        {message || "Data Anda hanya digunakan untuk menindaklanjuti kebutuhan konsultasi."}
+        {message || content.privacyText}
       </p>
     </form>
   );

@@ -2,11 +2,17 @@ import { CompanyLogo } from "./CompanyLogo";
 import Link from "next/link";
 import { ArrowUpRight, ChevronDown, Menu } from "lucide-react";
 
-import { navigation, solutionCategoryLabels } from "@/content/site";
-import { getPublishedSolutions } from "@/lib/landing-content";
+import { solutionCategoryLabels } from "@/content/site";
+import { getPublishedSolutions, getSiteSettings } from "@/lib/landing-content";
 
 export const SiteHeader: React.FC = async () => {
-  const solutions = await getPublishedSolutions();
+  const [solutions, settings] = await Promise.all([getPublishedSolutions(), getSiteSettings()]);
+  const content = settings.header;
+  const navigation = [
+    { label: content.workflowLabel, href: "/#cara-kerja" },
+    { label: content.projectsLabel, href: "/proyek#proyek-list" },
+    { label: content.insightsLabel, href: "/insight#insight-list" },
+  ];
   const groupedSolutions = Object.entries(solutionCategoryLabels).map(([key, label]) => ({
     key,
     label,
@@ -21,18 +27,18 @@ export const SiteHeader: React.FC = async () => {
         </Link>
 
         <nav className="desktop-nav" aria-label="Navigasi utama">
-          <Link href="/#tentang">Tentang</Link>
+          <Link href="/#tentang">{content.aboutLabel}</Link>
           <div className="solution-nav">
-            <Link className="solution-nav__link" href="/#solusi">Solusi</Link>
+            <Link className="solution-nav__link" href="/#solusi">{content.solutionsLabel}</Link>
             <details className="solution-nav__menu">
               <summary aria-label="Buka daftar solusi">
                 <ChevronDown size={14} />
               </summary>
               <div className="solution-mega-menu">
                 <div className="solution-mega-menu__intro">
-                  <span>End-to-end capabilities</span>
-                  <strong>Satu ekosistem untuk kebutuhan teknologi bisnis.</strong>
-                  <Link href="/#solusi">Lihat seluruh solusi <ArrowUpRight size={15} /></Link>
+                  <span>{content.menuEyebrow}</span>
+                  <strong>{content.menuTitle}</strong>
+                  <Link href="/#solusi">{content.menuLinkLabel} <ArrowUpRight size={15} /></Link>
                 </div>
                 {groupedSolutions.map((group) => (
                   <div className="solution-mega-menu__group" key={group.key}>
@@ -54,30 +60,30 @@ export const SiteHeader: React.FC = async () => {
               </div>
             </details>
           </div>
-          {navigation.slice(1).map((item) => (
+          {navigation.map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
         </nav>
 
         <Link className="header-cta" href="/#kontak">
-          Konsultasi <ArrowUpRight size={16} />
+          {content.consultationLabel} <ArrowUpRight size={16} />
         </Link>
 
         <details className="mobile-menu">
           <summary aria-label="Buka menu"><Menu size={22} /></summary>
           <nav aria-label="Navigasi seluler">
-            <Link href="/#tentang">Tentang</Link>
-            <Link href="/#solusi">Solusi</Link>
-            <p>Detail solusi</p>
+            <Link href="/#tentang">{content.aboutLabel}</Link>
+            <Link href="/#solusi">{content.solutionsLabel}</Link>
+            <p>{content.mobileDetailLabel}</p>
             {solutions.map((solution) => (
               <Link className="mobile-solution-link" href={`/solusi/${solution.slug}`} key={solution.slug}>
                 {solution.title}
               </Link>
             ))}
-            {navigation.slice(1).map((item) => (
+            {navigation.map((item) => (
               <Link href={item.href} key={item.href}>{item.label}</Link>
             ))}
-            <Link href="/#kontak">Konsultasi</Link>
+            <Link href="/#kontak">{content.consultationLabel}</Link>
           </nav>
         </details>
       </div>

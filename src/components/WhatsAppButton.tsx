@@ -1,5 +1,8 @@
 type WhatsAppButtonProps = {
   phone: string;
+  eyebrow?: string;
+  label?: string;
+  message?: string;
 };
 
 const normalizeWhatsAppNumber = (phone: string) => {
@@ -11,25 +14,23 @@ const normalizeWhatsAppNumber = (phone: string) => {
   return digits;
 };
 
-export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ phone }) => {
+export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ phone, eyebrow = "Butuh bantuan?", label = "Hubungi Kami", message = "Halo PT Sigma Core Solusindo, saya ingin berkonsultasi mengenai solusi IT untuk perusahaan kami." }) => {
   const number = normalizeWhatsAppNumber(phone);
-  const message = encodeURIComponent(
-    "Halo PT Sigma Core Solusindo, saya ingin berkonsultasi mengenai solusi IT untuk perusahaan kami.",
-  );
+  const encodedMessage = encodeURIComponent(message);
 
   if (!number) return null;
 
   return (
     <a
       className="whatsapp-float"
-      href={`https://wa.me/${number}?text=${message}`}
+      href={`https://wa.me/${number}?text=${encodedMessage}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`Hubungi PT Sigma Core Solusindo melalui WhatsApp di ${phone}`}
     >
       <span className="whatsapp-float__copy">
-        <small>Butuh bantuan?</small>
-        <strong>Hubungi Kami</strong>
+        <small>{eyebrow}</small>
+        <strong>{label}</strong>
       </span>
       <span className="whatsapp-float__icon" aria-hidden="true">
         <svg viewBox="0 0 32 32" role="img">

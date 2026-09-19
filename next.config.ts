@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const cmsAPIURL = new URL(process.env.CMS_API_URL ?? "http://localhost:3101/api");
+const cmsAPIURL = new URL(process.env.CMS_API_URL?.trim() || "http://localhost:3101/api");
 
 if (!["http:", "https:"].includes(cmsAPIURL.protocol)
   || cmsAPIURL.username

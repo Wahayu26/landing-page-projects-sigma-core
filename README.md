@@ -1,5 +1,12 @@
 # Sigma Core Company Profile Website
 
+Dokumentasi lengkap untuk landing page, CMS, arsitektur, development, dan
+operasional tersedia di [docs/PROJECT-DOCUMENTATION.md](docs/PROJECT-DOCUMENTATION.md).
+Panduan penggunaan dan gambaran sistem untuk klien tersedia di
+[docs/CLIENT-GUIDE.md](docs/CLIENT-GUIDE.md).
+Hasil audit keterhubungan konten landing page dan CMS tersedia di
+[docs/CMS-CONTENT-AUDIT.md](docs/CMS-CONTENT-AUDIT.md).
+
 Standalone Next.js public website for PT Sigma Core Solusindo. Payload CMS lives
 in the separate `scs-company-profile-cms` repository and is the only application
 that connects directly to PostgreSQL.
