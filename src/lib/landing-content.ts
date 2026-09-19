@@ -97,7 +97,16 @@ export type InsightView = {
 };
 
 export type SiteSettingsView = {
-  hero: { eyebrow: string; headline: string; highlight: string; description: string };
+  header: {
+    aboutLabel: string; solutionsLabel: string; workflowLabel: string; projectsLabel: string;
+    insightsLabel: string; ecosystemLabel: string; consultationLabel: string; menuEyebrow: string; menuTitle: string;
+    menuLinkLabel: string; mobileDetailLabel: string;
+  };
+  hero: {
+    eyebrow: string; headline: string; highlight: string; description: string;
+    image: string | null; imageAlt: string; primaryCTA: string; secondaryCTA: string;
+    proofOne: string; proofTwo: string; proofThree: string; proofFour: string;
+  };
   contact: { email: string; phone: string; address: string };
   consultation: { eyebrow: string; headline: string; description: string };
   companyFacts: { value: string; label: string }[];
@@ -107,6 +116,9 @@ export type SiteSettingsView = {
     eyebrow: string;
     title: string;
     description: string;
+    image: string | null;
+    imageAlt: string;
+    badge: string;
     steps: { step: string; title: string; text: string }[];
   };
   strengths: {
@@ -115,14 +127,31 @@ export type SiteSettingsView = {
     description: string;
     items: { title: string; text: string }[];
   };
+  solutionsSection: { eyebrow: string; title: string; description: string; cardLinkLabel: string; emptyMessage: string; emptyCTA: string };
+  projectsSection: { eyebrow: string; title: string; description: string; linkLabel: string; confidentialLabel: string };
+  ecosystemSection: { eyebrow: string; title: string; description: string };
+  insightsSection: { eyebrow: string; title: string; description: string; linkLabel: string };
+  contactForm: { submitLabel: string; privacyText: string; unknownSolutionLabel: string };
+  whatsapp: { eyebrow: string; label: string; message: string };
+  footer: { tagline: string; ctaLabel: string; navigationTitle: string; contactTitle: string; backToTopLabel: string; copyright: string };
 };
 
 const fallbackSettings: SiteSettingsView = {
+  header: {
+    aboutLabel: "Tentang", solutionsLabel: "Solusi", workflowLabel: "Cara Kerja", projectsLabel: "Proyek",
+    insightsLabel: "Insight", ecosystemLabel: "Ekosistem", consultationLabel: "Konsultasi", menuEyebrow: "End-to-end capabilities",
+    menuTitle: "Satu ekosistem untuk kebutuhan teknologi bisnis.", menuLinkLabel: "Lihat seluruh solusi", mobileDetailLabel: "Detail solusi",
+  },
   hero: {
     eyebrow: "Technology Infrastructure & System Integrator",
     headline: "Teknologi terintegrasi.",
     highlight: "Bisnis terus melaju.",
     description: "Kami merancang, mengintegrasikan, dan mengoptimalkan solusi IT end-to-end untuk operasional bisnis yang lebih andal, aman, dan scalable.",
+    image: null,
+    imageAlt: "Kota digital yang saling terhubung",
+    primaryCTA: "Diskusikan kebutuhan",
+    secondaryCTA: "Jelajahi solusi",
+    proofOne: "Reliable", proofTwo: "Secure", proofThree: "Scalable", proofFour: "Customer-focused",
   },
   contact: {
     email: "admin@sigmacore.id",
@@ -153,6 +182,9 @@ const fallbackSettings: SiteSettingsView = {
     eyebrow: "How we work",
     title: "Dari kebutuhan bisnis menuju sistem yang bekerja.",
     description: "Kami menyatukan beragam teknologi menjadi ekosistem yang seamless, optimal, dan mudah dikembangkan.",
+    image: null,
+    imageAlt: "Infrastruktur data center modern",
+    badge: "End-to-end system integration",
     steps: fallbackProcess,
   },
   strengths: {
@@ -160,6 +192,39 @@ const fallbackSettings: SiteSettingsView = {
     title: "Dibangun untuk menjadi partner, bukan sekadar penyedia.",
     description: "Setiap proyek dijalankan dengan kombinasi keahlian teknis, disiplin implementasi, dan pemahaman terhadap tujuan bisnis.",
     items: fallbackValues,
+  },
+  solutionsSection: {
+    eyebrow: "What we do", title: "Solusi menyeluruh untuk setiap lapisan teknologi.",
+    description: "Dari infrastruktur hingga keamanan, dari cloud hingga managed services—semua dirancang untuk bekerja bersama.",
+    cardLinkLabel: "Lihat detail solusi", emptyMessage: "Informasi solusi sedang diperbarui. Tim kami tetap siap membantu kebutuhan teknologi Anda.",
+    emptyCTA: "Hubungi tim SCS",
+  },
+  projectsSection: {
+    eyebrow: "Selected projects", title: "Implementasi yang memberi dampak nyata.",
+    description: "Beberapa solusi yang kami rancang untuk menjawab kebutuhan operasional dan pertumbuhan bisnis.",
+    linkLabel: "Lihat seluruh proyek", confidentialLabel: "Confidential client",
+  },
+  ecosystemSection: {
+    eyebrow: "Technology ecosystem", title: "Bekerja dengan teknologi terdepan.",
+    description: "Kami merancang solusi menggunakan ekosistem teknologi enterprise yang sudah teruji.",
+  },
+  insightsSection: {
+    eyebrow: "Latest insight", title: "Perspektif untuk keputusan teknologi yang lebih baik.",
+    description: "Insight terbaru dari tim SCS seputar infrastruktur, keamanan, cloud, dan transformasi digital.",
+    linkLabel: "Baca seluruh insight",
+  },
+  contactForm: {
+    submitLabel: "Kirim konsultasi", privacyText: "Data Anda hanya digunakan untuk menindaklanjuti kebutuhan konsultasi.",
+    unknownSolutionLabel: "Belum menentukan solusi",
+  },
+  whatsapp: {
+    eyebrow: "Butuh bantuan?", label: "Hubungi Kami",
+    message: "Halo PT Sigma Core Solusindo, saya ingin berkonsultasi mengenai solusi IT untuk perusahaan kami.",
+  },
+  footer: {
+    tagline: "Partner teknologi untuk bisnis yang terus bertumbuh. Terintegrasi, aman, dan siap melaju.",
+    ctaLabel: "Hubungi Kami", navigationTitle: "Jelajahi", contactTitle: "Kontak & lokasi",
+    backToTopLabel: "Kembali ke atas", copyright: "PT Sigma Core Solusindo. All rights reserved.",
   },
 };
 
@@ -245,9 +310,19 @@ function requiredGroup(parent: Row, name: string, fields: string[]) {
   return result;
 }
 
-function mapSettings(value: unknown): SiteSettingsView {
+function groupWithFallback<T extends Record<string, string>>(parent: Row, name: string, fallback: T): T {
+  const group = row(parent[name]);
+  return Object.fromEntries(Object.entries(fallback).map(([field, fallbackValue]) => [
+    field,
+    text(group[field]) || fallbackValue,
+  ])) as T;
+}
+
+function mapSettings(value: unknown, base: URL): SiteSettingsView {
   const doc = row(value);
+  const header = groupWithFallback(doc, "header", fallbackSettings.header);
   const hero = requiredGroup(doc, "hero", ["eyebrow", "headline", "highlight", "description"]);
+  const heroRow = row(doc.hero);
   const contact = requiredGroup(doc, "contact", ["email", "phone", "address"]);
   const consultationSource = row(doc.consultation);
   const consultation = {
@@ -259,6 +334,28 @@ function mapSettings(value: unknown): SiteSettingsView {
   const about = requiredGroup(doc, "about", ["eyebrow", "headline", "highlight", "description"]);
   const workflow = requiredGroup(doc, "workflow", ["eyebrow", "title", "description"]);
   const strengths = requiredGroup(doc, "strengths", ["eyebrow", "title", "description"]);
+  const solutionsSectionSource = groupWithFallback(doc, "solutionsSection", {
+    eyebrow: fallbackSettings.solutionsSection.eyebrow,
+    title: fallbackSettings.solutionsSection.title,
+    description: fallbackSettings.solutionsSection.description,
+    cardLinkLabel: fallbackSettings.solutionsSection.cardLinkLabel,
+    emptyMessage: fallbackSettings.solutionsSection.emptyMessage,
+    emptyButtonLabel: fallbackSettings.solutionsSection.emptyCTA,
+  });
+  const solutionsSection: SiteSettingsView["solutionsSection"] = {
+    eyebrow: solutionsSectionSource.eyebrow,
+    title: solutionsSectionSource.title,
+    description: solutionsSectionSource.description,
+    cardLinkLabel: solutionsSectionSource.cardLinkLabel,
+    emptyMessage: solutionsSectionSource.emptyMessage,
+    emptyCTA: solutionsSectionSource.emptyButtonLabel,
+  };
+  const projectsSection = groupWithFallback(doc, "projectsSection", fallbackSettings.projectsSection);
+  const ecosystemSection = groupWithFallback(doc, "ecosystemSection", fallbackSettings.ecosystemSection);
+  const insightsSection = groupWithFallback(doc, "insightsSection", fallbackSettings.insightsSection);
+  const contactForm = groupWithFallback(doc, "contactForm", fallbackSettings.contactForm);
+  const whatsapp = groupWithFallback(doc, "whatsapp", fallbackSettings.whatsapp);
+  const footer = groupWithFallback(doc, "footer", fallbackSettings.footer);
   const workflowRow = row(doc.workflow);
   const strengthsRow = row(doc.strengths);
   const steps = rows(workflowRow.steps).flatMap((item) => {
@@ -271,7 +368,18 @@ function mapSettings(value: unknown): SiteSettingsView {
   });
   if (!steps.length || !items.length) throw new Error("Published CMS workflow or strengths is empty.");
   return {
-    hero: hero as SiteSettingsView["hero"],
+    header: header as SiteSettingsView["header"],
+    hero: {
+      ...(hero as Pick<SiteSettingsView["hero"], "eyebrow" | "headline" | "highlight" | "description">),
+      image: cmsMediaURL(heroRow.image, base) || fallbackSettings.hero.image,
+      imageAlt: text(heroRow.imageAlt) || fallbackSettings.hero.imageAlt,
+      primaryCTA: text(heroRow.primaryButtonLabel) || fallbackSettings.hero.primaryCTA,
+      secondaryCTA: text(heroRow.secondaryButtonLabel) || fallbackSettings.hero.secondaryCTA,
+      proofOne: text(heroRow.proofOne) || fallbackSettings.hero.proofOne,
+      proofTwo: text(heroRow.proofTwo) || fallbackSettings.hero.proofTwo,
+      proofThree: text(heroRow.proofThree) || fallbackSettings.hero.proofThree,
+      proofFour: text(heroRow.proofFour) || fallbackSettings.hero.proofFour,
+    },
     contact: contact as SiteSettingsView["contact"],
     consultation,
     companyFacts: rows(doc.companyFacts).flatMap((item) => {
@@ -280,8 +388,21 @@ function mapSettings(value: unknown): SiteSettingsView {
     }),
     seo: seo as SiteSettingsView["seo"],
     about: about as SiteSettingsView["about"],
-    workflow: { ...(workflow as Omit<SiteSettingsView["workflow"], "steps">), steps },
+    workflow: {
+      ...(workflow as Pick<SiteSettingsView["workflow"], "eyebrow" | "title" | "description">),
+      image: cmsMediaURL(workflowRow.image, base) || fallbackSettings.workflow.image,
+      imageAlt: text(workflowRow.imageAlt) || fallbackSettings.workflow.imageAlt,
+      badge: text(workflowRow.badge) || fallbackSettings.workflow.badge,
+      steps,
+    },
     strengths: { ...(strengths as Omit<SiteSettingsView["strengths"], "items">), items },
+    solutionsSection,
+    projectsSection: projectsSection as SiteSettingsView["projectsSection"],
+    ecosystemSection: ecosystemSection as SiteSettingsView["ecosystemSection"],
+    insightsSection: insightsSection as SiteSettingsView["insightsSection"],
+    contactForm: contactForm as SiteSettingsView["contactForm"],
+    whatsapp: whatsapp as SiteSettingsView["whatsapp"],
+    footer: footer as SiteSettingsView["footer"],
   };
 }
 
@@ -333,7 +454,7 @@ const getViews = cache(async (publishedOnly = false) => {
       const mapped = mapInsight(value, base, snapshot.preview);
       return mapped ? [mapped] : [];
     }),
-    settings: mapSettings(snapshot.settings),
+    settings: mapSettings(snapshot.settings, base),
   };
 });
 

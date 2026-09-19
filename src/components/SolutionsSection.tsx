@@ -1,20 +1,29 @@
 import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
-import type { SolutionView } from "@/lib/landing-content";
+import type { SiteSettingsView, SolutionView } from "@/lib/landing-content";
 import { SectionHeading } from "./SectionHeading";
 
 type SolutionCardView = Pick<SolutionView, "slug" | "number" | "title" | "description" | "items" | "icon">;
 
+const defaultContent: SiteSettingsView["solutionsSection"] = {
+  eyebrow: "What we do",
+  title: "Solusi menyeluruh untuk setiap lapisan teknologi.",
+  description: "Dari infrastruktur hingga keamanan, dari cloud hingga managed services—semua dirancang untuk bekerja bersama.",
+  cardLinkLabel: "Lihat detail solusi",
+  emptyMessage: "Informasi solusi sedang diperbarui. Tim kami tetap siap membantu kebutuhan teknologi Anda.",
+  emptyCTA: "Hubungi tim SCS",
+};
+
 // Presentation only: the page supplies either published CMS views or demo views.
-export function SolutionsSection({ solutions }: { solutions: SolutionCardView[] }) {
+export function SolutionsSection({ solutions, content = defaultContent }: { solutions: SolutionCardView[]; content?: SiteSettingsView["solutionsSection"] }) {
   return (
     <section className="solutions section" id="solusi" aria-labelledby="solutions-heading">
       <div className="shell">
         <SectionHeading
           id="solutions-heading"
-          eyebrow="What we do"
-          title="Solusi menyeluruh untuk setiap lapisan teknologi."
-          description="Dari infrastruktur hingga keamanan, dari cloud hingga managed services—semua dirancang untuk bekerja bersama."
+          eyebrow={content.eyebrow}
+          title={content.title}
+          description={content.description}
         />
         {solutions.length ? (
           <div className="solution-grid">
@@ -32,15 +41,15 @@ export function SolutionsSection({ solutions }: { solutions: SolutionCardView[] 
                       <li key={`${index}-${item}`}><Check size={14} aria-hidden="true" /><span>{item}</span></li>
                     ))}</ul>}
                   </div>
-                  <span className="solution-card__link">Lihat detail solusi <ArrowUpRight size={18} aria-hidden="true" /></span>
+                  <span className="solution-card__link">{content.cardLinkLabel} <ArrowUpRight size={18} aria-hidden="true" /></span>
                 </Link>
               );
             })}
           </div>
         ) : (
           <div className="solutions-empty">
-            <p>Informasi solusi sedang diperbarui. Tim kami tetap siap membantu kebutuhan teknologi Anda.</p>
-            <Link className="button button-dark" href="#kontak">Hubungi tim SCS <ArrowUpRight size={18} aria-hidden="true" /></Link>
+            <p>{content.emptyMessage}</p>
+            <Link className="button button-dark" href="#kontak">{content.emptyCTA} <ArrowUpRight size={18} aria-hidden="true" /></Link>
           </div>
         )}
       </div>
